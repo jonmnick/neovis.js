@@ -8,6 +8,9 @@ import { EventController, CompletionEvent, ClickEdgeEvent, ClickNodeEvent, Error
 
 export const NEOVIS_DEFAULT_CONFIG = Symbol();
 
+//***************************ADDED**********************************************//
+var window;
+
 export default class NeoVis {
 	_nodes = {};
 	_edges = {};
@@ -34,6 +37,23 @@ export default class NeoVis {
 
 		this._consoleLog(config);
 		this._consoleLog(defaults);
+		
+		//***************************ADDED**********************************************//
+		var neoVis = {
+		  nodeIdInit: null,
+		  nodeListener: function(val) {},
+		  set nodeId(val) {
+			this.nodeIdInit = val;
+			this.nodeListener(val);
+		  },
+		  get nodeId() {
+			return this.nodeIdInit;
+		  },
+		  registerListener: function(listener) {
+			this.nodeListener = listener;
+		  }
+		};
+		window.neoVis = neoVis;
 	}
 
 	_consoleLog(message, level = 'log') {
@@ -115,6 +135,11 @@ export default class NeoVis {
 		) || Object.keys(neo4jNode.properties);
 
 		node.id = neo4jNode.identity.toInt();
+		
+		//***********************************************ADDED*********************************************************************************//
+		node.click = ()=>{
+			window.neoVis.nodeId = node.id;
+		}
 
 		// node size
 
